@@ -1,11 +1,6 @@
 # -*- coding: utf-8 -*-
 
 """ Snap selected UVs to closest target UVs
-
-Requirement:
-    kdtree: Copyright (c) Stefan Kögl <stefan@skoegl.net>
-    https://github.com/stefankoegl/kdtree
-
 """
 
 from PySide2 import QtWidgets, QtCore
@@ -16,11 +11,7 @@ import shiboken2
 import time
 import re
 
-try:
-    import kdtree
-except ImportError:
-    raise ImportError(
-        "KDTree is not installed. Download and install KDTree lib")
+import kdtree  # kdtree: Copyright (c) Stefan Kögl <stefan@skoegl.net> https://github.com/stefankoegl/kdtree
 
 
 def createTree(mesh):
@@ -51,8 +42,8 @@ def getMayaWindow():
 
 class Window(QtWidgets.QWidget):
 
-    def __init__(self, parent=None):
-        super(Window, self).__init__(parent)
+    def __init__(self, parent=None, *args, **kwargs):
+        super(Window, self).__init__(parent, *args, **kwargs)
 
         self.setWindowTitle("UV snap")
         self.setWindowFlags(QtCore.Qt.Window)
@@ -114,14 +105,17 @@ class Window(QtWidgets.QWidget):
 
         mesh.setUVs(uArray, vArray)
 
-
-if __name__ == "__main__":
+def show():
     t = time.time()
     w = Window(getMayaWindow())
     w.show()
     et = time.time() - t
     print(et)
+    return w
     
+if __name__ == "__main__":
+    show()
+
 
 import sys
 import maya.api.OpenMaya as om
@@ -130,7 +124,7 @@ import maya.cmds as cmds
 
 MENU_NAME = "ToolsMenu"  # no spaces in names, use CamelCase
 MENU_LABEL = "Tools"  # spaces are fine in labels
-MENU_ENTRY_LABEL = "My cool tool"
+MENU_ENTRY_LABEL = "Snap to closest UV Tool"
 
 MENU_PARENT = "MayaWindow"  # do not change
 
@@ -138,43 +132,10 @@ def maya_useNewAPI():  # noqa
     pass  # dummy method to tell Maya this plugin uses Maya Python API 2.0
 
 
-# =============================== Command ===========================================
-class HelloWorldCommand(om.MPxCommand):
-    command_name = "HelloWorld"
-
-    # def __init__(self):
-    #     om.MPxCommand.__init__(self)
-
-    # @staticmethod
-    # def command_creator():
-    #     return HelloWorldCommand()
-
-    def doIt(self, args):
-        print ("Hello World!")
-
-
-def register_command(plugin):
-    pluginFn = om.MFnPlugin(plugin)
-    try:
-        pluginFn.registerCommand(HelloWorldCommand.command_name, HelloWorldCommand.__init__)
-    except Exception as e:
-        sys.stderr.write(f"Failed to register command: {HelloWorldCommand.command_name}\n")
-        raise e
-  
-
-def unregister_command(plugin):
-    pluginFn = om.MFnPlugin(plugin)
-    try:
-        pluginFn.deregisterCommand(HelloWorldCommand.command_name)
-    except Exception as e:
-        sys.stderr.write(f"Failed to unregister command: {HelloWorldCommand.command_name}\n")
-        raise e
-
-
 # =============================== Menu ===========================================
 def show(*args):
     # TODO import our custom module
-    print("hello")
+    show()
 
 
 def loadMenu():
@@ -197,11 +158,9 @@ def unloadMenuItem():
 
 # =============================== Plugin (un)load ===========================================
 def initializePlugin(plugin):
-    register_command(plugin)
     loadMenu()
 
 
 def uninitializePlugin(plugin):
-    unregister_command(plugin)
     unloadMenuItem()
     
