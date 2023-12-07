@@ -37,7 +37,7 @@ def getMesh(path):
 
 def getMayaWindow():
     ptr = OpenMayaUI.MQtUtil.mainWindow()
-    return shiboken2.wrapInstance(long(ptr), QtWidgets.QMainWindow)
+    return shiboken2.wrapInstance(int(ptr), QtWidgets.QMainWindow)
 
 
 class Window(QtWidgets.QWidget):
