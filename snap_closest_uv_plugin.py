@@ -105,7 +105,7 @@ class Window(QtWidgets.QWidget):
 
         mesh.setUVs(uArray, vArray)
 
-def show():
+def show(*args):
     t = time.time()
     w = Window(getMayaWindow())
     w.show()
@@ -133,10 +133,6 @@ def maya_useNewAPI():  # noqa
 
 
 # =============================== Menu ===========================================
-def show(*args):
-    # TODO import our custom module
-    show()
-
 
 def loadMenu():
     if not cmds.menu(f"{MENU_PARENT}|{MENU_NAME}", exists=True):
